@@ -1,4 +1,4 @@
-package org.example.MiddleWare.Services.Controller;
+package org.example.MiddleWare.Controller;
 
 import org.example.MiddleWare.Services.servicesImplementation.UserServicesImp;
 import org.example.entity.*;

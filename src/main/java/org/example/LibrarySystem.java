@@ -1,8 +1,8 @@
 package org.example;
 
-import org.example.MiddleWare.Services.Controller.LibrarianController;
-import org.example.MiddleWare.Services.Controller.ManagementSystemController;
-import org.example.MiddleWare.Services.Controller.UserController;
+import org.example.MiddleWare.Controller.LibrarianController;
+import org.example.MiddleWare.Controller.ManagementSystemController;
+import org.example.MiddleWare.Controller.UserController;
 import org.example.database.LibraryDatabase;
 import org.example.entity.*;
 
