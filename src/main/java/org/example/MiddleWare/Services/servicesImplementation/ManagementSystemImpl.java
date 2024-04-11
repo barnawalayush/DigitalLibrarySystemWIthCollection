@@ -32,13 +32,6 @@ public class ManagementSystemImpl implements ManagementSystem {
         }
 
         return hasUser;
-
-//        for(User eachUser: LibraryDatabase.userList){
-//            if(eachUser.getName().equals(user.getName()) && eachUser.getPassword().equals(user.getPassword())){
-//                return true;
-//            }
-//        }
-//        return false;
     }
 
     @Override
@@ -61,13 +54,6 @@ public class ManagementSystemImpl implements ManagementSystem {
         }
 
         return hasLibrarian;
-
-//        for(Librarian eachLibrarian: LibraryDatabase.librarianList){
-//            if(eachLibrarian.getName().equals(librarian.getName()) && eachLibrarian.getPassword().equals(librarian.getPassword())){
-//                return true;
-//            }
-//        }
-//        return false;
     }
 
     @Override
@@ -76,8 +62,19 @@ public class ManagementSystemImpl implements ManagementSystem {
     }
 
     @Override
-    public void registerNewUser(User user) {
+    public void registerNewUser(User user, Connection connection) {
+        try {
 
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO \"user\" VALUES" +
+                    "(?,?,?)");
+            preparedStatement.setString(1, "3");
+            preparedStatement.setString(2, user.getName());
+            preparedStatement.setString(3, user.getPassword());
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -100,8 +97,6 @@ public class ManagementSystemImpl implements ManagementSystem {
             throw new RuntimeException(e);
         }
         return newUser;
-//        return LibraryDatabase.userList.stream().filter(eachUser -> eachUser.getName().equals(user.getName())
-//                && eachUser.getPassword().equals(user.getPassword())).findFirst().get();
     }
 
     @Override
@@ -124,25 +119,6 @@ public class ManagementSystemImpl implements ManagementSystem {
             throw new RuntimeException(e);
         }
         return newLibrarian;
-
-//        return LibraryDatabase.librarianList.stream().filter(eachLibrarian ->
-//                eachLibrarian.getName().equals(librarian.getName())
-//                        && eachLibrarian.getPassword().equals(librarian.getPassword())).findFirst().get();
     }
-
-    @Override
-    public Book getBookById(String bookId) {
-
-        return LibraryDatabase.bookList.stream().filter(book -> book.getBookId().equals(bookId)).findFirst().get();
-    }
-
-    @Override
-    public User getUserById(String userId) {
-        return LibraryDatabase.userList.stream()
-                .filter(eachUser -> eachUser.getUserId().equals(userId))
-                .findFirst()
-                .get();
-    }
-
 
 }

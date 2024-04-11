@@ -3,6 +3,7 @@ package org.example;
 import org.example.MiddleWare.Controller.LibrarianController;
 import org.example.MiddleWare.Controller.ManagementSystemController;
 import org.example.MiddleWare.Controller.UserController;
+import org.example.MiddleWare.Services.servicesImplementation.ManagementSystemImpl;
 import org.example.entity.*;
 
 import java.sql.Connection;
@@ -20,8 +21,6 @@ public class LibrarySystem {
 
     public static void main(String[] args) {
 
-        LibraryDatabase.generateDatabase();
-
         connection = DatabaseConnection.connect();
 
         loggedIn = true;
@@ -33,6 +32,8 @@ public class LibrarySystem {
         System.out.println("Select mode to LogIn:");
         System.out.println("1. Customer");
         System.out.println("2. Librarian");
+        System.out.println();
+        System.out.println("3. New User? Sign Up!!");
 
         Scanner scanner = new Scanner(System.in);
 
@@ -44,6 +45,9 @@ public class LibrarySystem {
             }else if(selectedMode.equals("2")){
                 authenticateLibrarian(scanner);
                 break;
+            }else if(selectedMode.equals("3")){
+                registerUser(scanner);
+                break;
             }else {
                 System.out.println("\nPlease Select the right Option!\n");
                 selectedMode = scanner.nextLine();
@@ -52,6 +56,15 @@ public class LibrarySystem {
 
     }
 
+    private static void registerUser(Scanner scanner) {
+        System.out.println();
+        System.out.print("Please enter your name: ");
+        String name  = scanner.nextLine();
+        System.out.print("Please enter password: ");
+        String password = scanner.nextLine();
+
+        managementSystemController.registerNewUser(new User(name, password), connection);
+    }
 
 
     private static void authenticateUser(Scanner scanner) {
@@ -140,7 +153,7 @@ public class LibrarySystem {
 
             switch (selectedOption){
                 case "1":
-                    librarianController.displayBooks();
+                    librarianController.displayBooks(connection);
                     break;
                 case "2":
                     addBook(scanner);
@@ -216,9 +229,7 @@ public class LibrarySystem {
         System.out.print("Please enter the userId: ");
         String userId = scanner.nextLine();
 
-        User userToRemove = managementSystemController.getUserById(userId);
-
-        librarianController.removeUser(userToRemove, connection);
+        librarianController.removeUser(userId, connection);
     }
     private static void deleteBook(Scanner scanner) {
         System.out.print("Please enter the Book Id you want to delete: ");

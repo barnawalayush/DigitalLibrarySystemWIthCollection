@@ -15,16 +15,12 @@ public class LibrarianController {
         librarianServices = new LibrarianServicesImpl();
     }
 
-    public void displayBooks(){
-        librarianServices.displayBook();
+    public void displayBooks(Connection connection){
+        librarianServices.displayBook(connection);
     }
 
     public void displayAllUsers(Connection connection){
         librarianServices.displayAllUsers(connection);
-    }
-
-    public Boolean approveBookBorrowedRequest(User user, Book book){
-        return librarianServices.approveBookBorrowRequest(user, book);
     }
 
     public void addBook(Book book, Connection connection){
@@ -43,8 +39,8 @@ public class LibrarianController {
         librarianServices.getALlComplaintByUserId(user);
     }
 
-    public void removeUser(User user, Connection connection){
-        librarianServices.removeUser(user, connection);
+    public void removeUser(String userId, Connection connection){
+        librarianServices.removeUser(userId, connection);
     }
 
     public void displayAllComplaint(){

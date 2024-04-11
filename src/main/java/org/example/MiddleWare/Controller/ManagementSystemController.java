@@ -31,11 +31,8 @@ public class ManagementSystemController {
         return managementSystem.getLibrarian(librarian, connection);
     }
 
-    public Book getBookById(String bookId){
-        return managementSystem.getBookById(bookId);
+    public void registerNewUser(User user, Connection connection){
+        managementSystem.registerNewUser(user, connection);
     }
 
-    public User getUserById(String userId){
-        return managementSystem.getUserById(userId);
-    }
 }

@@ -14,11 +14,6 @@ public class LibrarianServicesImpl implements LibrarianServices {
     public LibrarianServicesImpl(){}
 
     @Override
-    public Boolean approveBookBorrowRequest(User user, Book book) {
-        return book.getAvailability();
-    }
-
-    @Override
     public void addBook(Book book, Connection connection) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO book VALUES(?,?,?,?,?,?)");
@@ -33,16 +28,10 @@ public class LibrarianServicesImpl implements LibrarianServices {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-//        LibraryDatabase.bookList.add(book);
     }
 
     @Override
     public void updateBook(Book oldBook, Book newBook) {
-        LibraryDatabase.bookList.forEach(book -> {
-            if(book.getBookId().equals(oldBook.getBookId())){
-                book = newBook;
-            }
-        });
     }
 
     @Override
@@ -55,27 +44,26 @@ public class LibrarianServicesImpl implements LibrarianServices {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-//        Iterator<Book> bookIterator = LibraryDatabase.bookList.iterator();
-//        while (bookIterator.hasNext()){
-//            Book book = bookIterator.next();
-//            if(book.getBookId().equals(bookId)){
-//                bookIterator.remove();
-//                System.out.println("Book removed Successfully");
-//                return;
-//            }
-//        }
     }
 
     @Override
-    public void displayBook() {
+    public void displayBook(Connection connection) {
         System.out.println();
         System.out.println("### List of All Books ###");
         System.out.println();
-        LibraryDatabase.bookList.forEach(book -> {
-            System.out.println(book.getBookId() + " " + book.getBookName() + " " + book.getAuthor()
-                    + " " + book.getCategory());
-        });
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM book");
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                System.out.println(resultSet.getString(1) + " " + resultSet.getString(2)
+                        + " " + resultSet.getString(3) + " " + resultSet.getString(4)
+                        + " " + resultSet.getString(5)+ " " + resultSet.getString(6));
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -89,26 +77,15 @@ public class LibrarianServicesImpl implements LibrarianServices {
     }
 
     @Override
-    public void removeUser(User user, Connection connection) {
+    public void removeUser(String userId, Connection connection) {
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM \"user\" WHERE user_id=?");
-            preparedStatement.setString(1, user.getUserId());
+            preparedStatement.setString(1, userId);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-//        Iterator<User> userIterator = LibraryDatabase.userList.iterator();
-//        while (userIterator.hasNext()){
-//            User eachUser = userIterator.next();
-//            if(eachUser.getUserId().equals(user.getUserId())){
-//                userIterator.remove();
-//                System.out.println();
-//                System.out.println("User removed Successfully!");
-//                return;
-//            }
-//        }
     }
 
     @Override
@@ -129,9 +106,6 @@ public class LibrarianServicesImpl implements LibrarianServices {
 
         @Override
     public void displayAllComplaint() {
-        LibraryDatabase.complaintList.stream().forEach(complaint -> {
-            System.out.println(complaint.getUser().getName() + "\n" + complaint.getMessage() + "\n" + complaint.getGeneratedAt());
-        });
     }
 
     @Override
@@ -148,11 +122,5 @@ public class LibrarianServicesImpl implements LibrarianServices {
         catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-
-//        LibraryDatabase.feedbackList
-//                .stream()
-//                .filter(feedback -> feedback.getBookId().equals(bookId))
-//                .forEach(feedback -> System.out.println(feedback.getMessage()));
     }
 }

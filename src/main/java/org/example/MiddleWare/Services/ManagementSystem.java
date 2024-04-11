@@ -14,14 +14,10 @@ public interface ManagementSystem {
 
     void logOut(User user);
 
-    void registerNewUser(User user);
+    void registerNewUser(User user, Connection connection);
 
     User getUser(User user, Connection connection);
 
     Librarian getLibrarian(Librarian librarian, Connection connection);
-
-    Book getBookById(String bookId);
-
-    User getUserById(String userId);
 
 }

@@ -30,11 +30,6 @@ public class UserServicesImp implements UserServices {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-//        LibraryDatabase.bookList.forEach(book -> {
-//            System.out.println(book.getBookId() + " " + book.getBookName() + " " + book.getAuthor()
-//                + " " + book.getCategory());
-//        });
     }
 
     @Override
@@ -55,14 +50,6 @@ public class UserServicesImp implements UserServices {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-
-//        LibraryDatabase.reservedBookList.forEach(book -> {
-//            if(book.getUser().getUserId().equals(userId)){
-//                System.out.println(book.getBook().getBookName() + " " + book.getBorrowedAt()
-//                        + " " + book.getDeadline());
-//            }
-//        });
     }
 
     @Override
@@ -83,14 +70,6 @@ public class UserServicesImp implements UserServices {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-//        LibraryDatabase.reservedBookList.forEach(book -> {
-//            if(book.getUser().getUserId().equals(userId)
-//                    && (book.getDeadline().compareTo(LocalDate.now()) > 0)){
-//                System.out.println(book.getBook().getBookName() + " " + book.getBorrowedAt()
-//                        + " " + book.getDeadline());
-//            }
-//        });
     }
 
     @Override
@@ -114,16 +93,6 @@ public class UserServicesImp implements UserServices {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-
-//        LibraryDatabase.bookList.stream().forEach(eachBook -> {
-//            if(eachBook.getBookId().equals(book.getBookId())){
-//                eachBook.setAvailability(false);
-//                eachBook.setUser(user);
-//            }
-//        });
-
-//        LibraryDatabase.reservedBookList.add(reservedBook);
     }
 
     @Override
@@ -151,8 +120,6 @@ public class UserServicesImp implements UserServices {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-//        LibraryDatabase.feedbackList.add(feedback);
     }
 
     @Override
@@ -169,8 +136,6 @@ public class UserServicesImp implements UserServices {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-//        LibraryDatabase.complaintList.add(complaint);
     }
 
     @Override
@@ -190,11 +155,6 @@ public class UserServicesImp implements UserServices {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-//        LibraryDatabase.bookList.stream()
-//                .filter(book -> book.getPublication().toLowerCase().equals(publication.toLowerCase()))
-//                .forEach(book -> System.out.println(book.getBookId() + " " + book.getBookName()
-//                        + " " + book.getPublication()));
     }
 
     @Override
@@ -212,11 +172,5 @@ public class UserServicesImp implements UserServices {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
-
-//        LibraryDatabase.complaintList.stream()
-//                .filter(complaint -> complaint.getUser().getUserId().equals(user.getUserId()))
-//                .forEach(complaint -> System.out.println(complaint.getMessage()
-//                        + "\n" + complaint.getGeneratedAt() + "\n"));
     }
 }
