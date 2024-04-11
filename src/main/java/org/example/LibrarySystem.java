@@ -34,13 +34,22 @@ public class LibrarySystem {
         Scanner scanner = new Scanner(System.in);
 
         String selectedMode = scanner.nextLine();
-        if(selectedMode.equals("1")){
-            authenticateUser(scanner);
-        }else{
-            authenticateLibrarian(scanner);
+        while(true){
+            if(selectedMode.equals("1")){
+                authenticateUser(scanner);
+                break;
+            }else if(selectedMode.equals("2")){
+                authenticateLibrarian(scanner);
+                break;
+            }else {
+                System.out.println("\nPlease Select the right Option!\n");
+                selectedMode = scanner.nextLine();
+            }
         }
 
     }
+
+
 
     private static void authenticateUser(Scanner scanner) {
 
@@ -60,6 +69,26 @@ public class LibrarySystem {
         }
 
     }
+    private static void authenticateLibrarian(Scanner scanner) {
+
+        System.out.println("Please enter your login detail:");
+        System.out.print("LibrarianName: ");
+        String name  = scanner.nextLine();
+        System.out.print("password: ");
+        String password = scanner.nextLine();
+
+        if(managementSystemController.logInLibrarian(new Librarian(name, password))){
+            Librarian librarian = managementSystemController.getLibrarian(new Librarian(name, password));
+            System.out.println("Welcome to Library");
+            handleLibrarian(librarian, scanner);
+        }else{
+            System.out.println("bad Credential");
+            authenticateLibrarian(scanner);
+        }
+
+    }
+
+
 
     private static void handleUser(Scanner scanner) {
 
@@ -100,65 +129,6 @@ public class LibrarySystem {
             }
         }
     }
-
-    private static void submitFeedback(Scanner scanner) {
-        System.out.println();
-        System.out.print("Please enter the Book Id for which you want to give feedback: ");
-
-        String bookId = scanner.nextLine();
-
-        System.out.println("Enter the feedback:");
-        String feedbackMessage = scanner.nextLine();
-
-        Feedback feedback = new Feedback(user, bookId, feedbackMessage, LocalDate.now());
-        userController.submitFeedback(feedback);
-
-    }
-
-    private static void fileComplain(Scanner scanner) {
-        System.out.println("Please enter the complain you want to file");
-        String complaintMessage = scanner.nextLine();
-
-        Complaint complaint = new Complaint(user, complaintMessage, LocalDate.now());
-
-        userController.fileComplaint(complaint);
-    }
-
-    private static void searchBookByPublications(Scanner scanner) {
-        System.out.print("Please enter the publication: ");
-        String publication = scanner.nextLine();
-
-        userController.searchBookByPublications(publication);
-    }
-
-    private static void handleBookBorrowRequest(Scanner scanner) {
-        System.out.print("Please select the book Id: ");
-        String selectedBookId = scanner.nextLine();
-
-        Book book = managementSystemController.getBookById(selectedBookId);
-
-        userController.borrowBook(user, book);
-    }
-
-    private static void authenticateLibrarian(Scanner scanner) {
-
-        System.out.println("Please enter your login detail:");
-        System.out.print("LibrarianName: ");
-        String name  = scanner.nextLine();
-        System.out.print("password: ");
-        String password = scanner.nextLine();
-
-        if(managementSystemController.logInLibrarian(new Librarian(name, password))){
-            Librarian librarian = managementSystemController.getLibrarian(new Librarian(name, password));
-            System.out.println("Welcome to Library");
-            handleLibrarian(librarian, scanner);
-        }else{
-            System.out.println("bad Credential");
-            authenticateLibrarian(scanner);
-        }
-
-    }
-
     private static void handleLibrarian(Librarian librarian, Scanner scanner) {
 
         while (loggedIn){
@@ -199,12 +169,48 @@ public class LibrarySystem {
         }
     }
 
+
+
+    private static void submitFeedback(Scanner scanner) {
+        System.out.println();
+        System.out.print("Please enter the Book Id for which you want to give feedback: ");
+
+        String bookId = scanner.nextLine();
+
+        System.out.println("Enter the feedback:");
+        String feedbackMessage = scanner.nextLine();
+
+        Feedback feedback = new Feedback(user, bookId, feedbackMessage, LocalDate.now());
+        userController.submitFeedback(feedback);
+
+    }
+    private static void fileComplain(Scanner scanner) {
+        System.out.println("Please enter the complain you want to file");
+        String complaintMessage = scanner.nextLine();
+
+        Complaint complaint = new Complaint(user, complaintMessage, LocalDate.now());
+
+        userController.fileComplaint(complaint);
+    }
+    private static void searchBookByPublications(Scanner scanner) {
+        System.out.print("Please enter the publication: ");
+        String publication = scanner.nextLine();
+
+        userController.searchBookByPublications(publication);
+    }
+    private static void handleBookBorrowRequest(Scanner scanner) {
+        System.out.print("Please select the book Id: ");
+        String selectedBookId = scanner.nextLine();
+
+        Book book = managementSystemController.getBookById(selectedBookId);
+
+        userController.borrowBook(user, book);
+    }
     private static void getAllFeedbackByBookName(Scanner scanner) {
         System.out.print("Enter the Book Id: ");
         String bookId = scanner.nextLine();
         librarianController.getAllFeedbacksByBookName(bookId);
     }
-
     private static void removeUser(Scanner scanner) {
         System.out.print("Please enter the userId: ");
         String userId = scanner.nextLine();
@@ -213,17 +219,14 @@ public class LibrarySystem {
 
         librarianController.removeUser(userToRemove);
     }
-
     private static void deleteBook(Scanner scanner) {
         System.out.print("Please enter the Book Id you want to delete: ");
         String bookId = scanner.nextLine();
 
         librarianController.deleteBookById(bookId);
     }
-
     private static void updateBook(Scanner scanner) {
     }
-
     private static void addBook(Scanner scanner) {
 
         System.out.println("Please enter the book details: ");
@@ -244,6 +247,8 @@ public class LibrarySystem {
         librarianController.addBook(book);
     }
 
+
+
     private static void printLibrarianFunctionality() {
         System.out.println();
         System.out.println("Select the functionality which you want to use:");
@@ -258,7 +263,6 @@ public class LibrarySystem {
         System.out.println("9: LogOut");
         System.out.println();
     }
-
     private static void printUserFunctionality() {
         System.out.println();
         System.out.println("Select the functionality which you want to use:");
@@ -273,4 +277,5 @@ public class LibrarySystem {
         System.out.println("9: LogOut");
         System.out.println();
     }
+
 }

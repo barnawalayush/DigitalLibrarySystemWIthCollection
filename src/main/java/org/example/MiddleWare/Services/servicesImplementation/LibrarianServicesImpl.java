@@ -32,11 +32,6 @@ public class LibrarianServicesImpl implements LibrarianServices {
 
     @Override
     public void deleteBookById(String bookId) {
-//        LibraryDatabase.bookList.forEach(eachBook -> {
-//            if(eachBook.getBookId().equals(bookId)){
-//                LibraryDatabase.bookList.remove(eachBook);
-//            }
-//        });
         Iterator<Book> bookIterator = LibraryDatabase.bookList.iterator();
         while (bookIterator.hasNext()){
             Book book = bookIterator.next();
