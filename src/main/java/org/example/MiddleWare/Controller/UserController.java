@@ -3,6 +3,8 @@ package org.example.MiddleWare.Controller;
 import org.example.MiddleWare.Services.servicesImplementation.UserServicesImp;
 import org.example.entity.*;
 
+import java.sql.Connection;
+
 public class UserController {
 
     private UserServicesImp userServicesImp;
@@ -11,20 +13,20 @@ public class UserController {
         userServicesImp = new UserServicesImp();
     }
 
-    public void displayBook(){
-        userServicesImp.displayBooks();
+    public void displayBook(Connection connection){
+        userServicesImp.displayBooks(connection);
     }
 
-    public void displayBorrowedBook(User user){
-        userServicesImp.displayBorrowedBooks(user);
+    public void displayBorrowedBook(String userId, Connection connection){
+        userServicesImp.displayBorrowedBooks(userId, connection);
     }
 
-    public void displayDeadlineCrossedBook(User user){
-        userServicesImp.displayDeadlineCrossedBook(user);
+    public void displayDeadlineCrossedBook(String userId, Connection connection){
+        userServicesImp.displayDeadlineCrossedBook(userId, connection);
     }
 
-    public void borrowBook(User user, Book book){
-        userServicesImp.BorrowBook(user, book);
+    public void borrowBook(String userId, String bookId, Connection connection){
+        userServicesImp.BorrowBook(userId, bookId, connection);
     }
 
     public void RenewBook(User user, ReservedBook book){
@@ -35,19 +37,19 @@ public class UserController {
         userServicesImp.returnBook(user, book);
     }
 
-    public void submitFeedback(Feedback feedback) {
-        userServicesImp.submitFeedback(feedback);
+    public void submitFeedback(Feedback feedback, Connection connection) {
+        userServicesImp.submitFeedback(feedback, connection);
     }
 
-    public void fileComplaint(Complaint complaint) {
-        userServicesImp.fileComplaint(complaint);
+    public void fileComplaint(Complaint complaint, Connection connection) {
+        userServicesImp.fileComplaint(complaint, connection);
     }
 
-    public void searchBookByPublications(String publication){
-        userServicesImp.searchBookByPublications(publication);
+    public void searchBookByPublications(String publication, Connection connection){
+        userServicesImp.searchBookByPublications(publication, connection);
     }
 
-    public void seeAllComplaint(User user){
-        userServicesImp.seeAllComplaint(user);
+    public void seeAllComplaint(User user, Connection connection){
+        userServicesImp.seeAllComplaint(user, connection);
     }
 }

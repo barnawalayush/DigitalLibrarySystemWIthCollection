@@ -1,9 +1,12 @@
 package org.example.MiddleWare.Services.servicesImplementation;
 
 import org.example.MiddleWare.Services.UserServices;
-import org.example.database.LibraryDatabase;
 import org.example.entity.*;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 
 public class UserServicesImp implements UserServices {
@@ -11,52 +14,116 @@ public class UserServicesImp implements UserServices {
     public UserServicesImp(){}
 
     @Override
-    public void displayBooks() {
+    public void displayBooks(Connection connection) {
         System.out.println("### List of ALl Books ###");
         System.out.println();
-        LibraryDatabase.bookList.forEach(book -> {
-            System.out.println(book.getBookId() + " " + book.getBookName() + " " + book.getAuthor()
-                + " " + book.getCategory());
-        });
-    }
 
-    @Override
-    public void displayBorrowedBooks(User user) {
-        System.out.println("### List of ALl Books ###");
-        System.out.println();
-        LibraryDatabase.reservedBookList.forEach(book -> {
-            if(book.getUser().getUserId().equals(user.getUserId())){
-                System.out.println(book.getBook().getBookName() + " " + book.getBorrowedAt()
-                        + " " + book.getDeadline());
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM book");
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                System.out.println(resultSet.getString(1) + " " + resultSet.getString(2)
+                        + " " + resultSet.getString(3) + " " + resultSet.getString(4)
+                        + " " + resultSet.getString(5)+ " " + resultSet.getString(6));
             }
-        });
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+//        LibraryDatabase.bookList.forEach(book -> {
+//            System.out.println(book.getBookId() + " " + book.getBookName() + " " + book.getAuthor()
+//                + " " + book.getCategory());
+//        });
     }
 
     @Override
-    public void displayDeadlineCrossedBook(User user) {
+    public void displayBorrowedBooks(String userId, Connection connection) {
         System.out.println("### List of ALl Books ###");
         System.out.println();
-        LibraryDatabase.reservedBookList.forEach(book -> {
-            if(book.getUser().getUserId().equals(user.getUserId())
-                    && (book.getDeadline().compareTo(LocalDate.now()) > 0)){
-                System.out.println(book.getBook().getBookName() + " " + book.getBorrowedAt()
-                        + " " + book.getDeadline());
+
+        try {
+            PreparedStatement preparedStatement = connection
+                    .prepareStatement("SELECT * FROM reservedbook as r LEFT JOIN book as b " +
+                            "ON b.book_id = r.book_id ");
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                System.out.println(resultSet.getString(6)+ " " + resultSet.getString(7)
+                        + " " + resultSet.getString(3)
+                                + " " + resultSet.getString(4));
             }
-        });
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+
+//        LibraryDatabase.reservedBookList.forEach(book -> {
+//            if(book.getUser().getUserId().equals(userId)){
+//                System.out.println(book.getBook().getBookName() + " " + book.getBorrowedAt()
+//                        + " " + book.getDeadline());
+//            }
+//        });
     }
 
     @Override
-    public void BorrowBook(User user, Book book) {
+    public void displayDeadlineCrossedBook(String userId, Connection connection) {
+        System.out.println("### List of ALl Books ###");
+        System.out.println();
+
+        String currentDate = String.valueOf(LocalDate.now());
+        try {
+            PreparedStatement preparedStatement = connection
+                    .prepareStatement("SELECT * FROM reservedbook WHERE deadline<?");
+            preparedStatement.setString(1, currentDate);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                System.out.println(resultSet.getString(1) + " " + resultSet.getString(2)
+                + " " + resultSet.getString(3) + " " + resultSet.getString(4));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+//        LibraryDatabase.reservedBookList.forEach(book -> {
+//            if(book.getUser().getUserId().equals(userId)
+//                    && (book.getDeadline().compareTo(LocalDate.now()) > 0)){
+//                System.out.println(book.getBook().getBookName() + " " + book.getBorrowedAt()
+//                        + " " + book.getDeadline());
+//            }
+//        });
+    }
+
+    @Override
+    public void BorrowBook(String userId, String bookId, Connection connection) {
         LocalDate currentDate = LocalDate.now();
-        ReservedBook reservedBook = new ReservedBook(user, book, currentDate, currentDate.plusDays(1));
-        LibraryDatabase.bookList.stream().forEach(eachBook -> {
-            if(eachBook.getBookId().equals(book.getBookId())){
-                eachBook.setAvailability(false);
-                eachBook.setUser(user);
-            }
-        });
+        LocalDate deadline = currentDate.plusDays(3);
 
-        LibraryDatabase.reservedBookList.add(reservedBook);
+        try {
+
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO reservedbook VALUES(?,?,?,?)");
+            preparedStatement.setString(1, userId);
+            preparedStatement.setString(2, bookId);
+            preparedStatement.setString(3, String.valueOf(currentDate));
+            preparedStatement.setString(4, String.valueOf(deadline));
+            preparedStatement.executeUpdate();
+
+            String sqlQuery = "UPDATE book SET availabe = false WHERE book_id = " + "'" + bookId + "'";
+            preparedStatement = connection.prepareStatement(sqlQuery);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+
+//        LibraryDatabase.bookList.stream().forEach(eachBook -> {
+//            if(eachBook.getBookId().equals(book.getBookId())){
+//                eachBook.setAvailability(false);
+//                eachBook.setUser(user);
+//            }
+//        });
+
+//        LibraryDatabase.reservedBookList.add(reservedBook);
     }
 
     @Override
@@ -70,29 +137,86 @@ public class UserServicesImp implements UserServices {
     }
 
     @Override
-    public void submitFeedback(Feedback feedback) {
-        LibraryDatabase.feedbackList.add(feedback);
+    public void submitFeedback(Feedback feedback, Connection connection) {
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO feedback VALUES" +
+                    "(?,?,?,?)");
+            preparedStatement.setString(1, feedback.getUser().getUserId());
+            preparedStatement.setString(2, feedback.getBookId());
+            preparedStatement.setString(3, feedback.getMessage());
+            preparedStatement.setString(4, String.valueOf(LocalDate.now()));
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+//        LibraryDatabase.feedbackList.add(feedback);
     }
 
     @Override
-    public void fileComplaint(Complaint complaint) {
-        LibraryDatabase.complaintList.add(complaint);
+    public void fileComplaint(Complaint complaint, Connection connection) {
+
+        String currentDate = String.valueOf(LocalDate.now());
+        try {
+            PreparedStatement preparedStatement = connection
+                    .prepareStatement("INSERT INTO complaint VALUES(?,?,?)");
+            preparedStatement.setString(1, complaint.getUser().getUserId());
+            preparedStatement.setString(2, complaint.getMessage());
+            preparedStatement.setString(3, currentDate);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+//        LibraryDatabase.complaintList.add(complaint);
     }
 
     @Override
-    public void searchBookByPublications(String publication) {
+    public void searchBookByPublications(String publication, Connection connection) {
         System.out.println();
-        LibraryDatabase.bookList.stream()
-                .filter(book -> book.getPublication().toLowerCase().equals(publication.toLowerCase()))
-                .forEach(book -> System.out.println(book.getBookId() + " " + book.getBookName()
-                        + " " + book.getPublication()));
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM book where publication=?");
+            preparedStatement.setString(1, publication);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                System.out.println(resultSet.getString(1) + " " + resultSet.getString(2)
+                             + " " + resultSet.getString(3) + " " + resultSet.getString(4)
+                             + " " + resultSet.getString(5) + " " + resultSet.getString(6));
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+//        LibraryDatabase.bookList.stream()
+//                .filter(book -> book.getPublication().toLowerCase().equals(publication.toLowerCase()))
+//                .forEach(book -> System.out.println(book.getBookId() + " " + book.getBookName()
+//                        + " " + book.getPublication()));
     }
 
     @Override
-    public void seeAllComplaint(User user) {
-        LibraryDatabase.complaintList.stream()
-                .filter(complaint -> complaint.getUser().getUserId().equals(user.getUserId()))
-                .forEach(complaint -> System.out.println(complaint.getMessage()
-                        + "\n" + complaint.getGeneratedAt() + "\n"));
+    public void seeAllComplaint(User user, Connection connection) {
+
+        try {
+            PreparedStatement preparedStatement = connection
+                    .prepareStatement("SELECT * FROM complaint WHERE complainer_id=?");
+            preparedStatement.setString(1, user.getUserId());
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                System.out.println(resultSet.getString(1) + " " + resultSet.getString(2)
+                + " " + resultSet.getString(3));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+
+//        LibraryDatabase.complaintList.stream()
+//                .filter(complaint -> complaint.getUser().getUserId().equals(user.getUserId()))
+//                .forEach(complaint -> System.out.println(complaint.getMessage()
+//                        + "\n" + complaint.getGeneratedAt() + "\n"));
     }
 }

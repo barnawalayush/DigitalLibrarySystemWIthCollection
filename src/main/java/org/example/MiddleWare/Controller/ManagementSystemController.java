@@ -6,6 +6,8 @@ import org.example.entity.Book;
 import org.example.entity.Librarian;
 import org.example.entity.User;
 
+import java.sql.Connection;
+
 public class ManagementSystemController {
 
     ManagementSystemImpl managementSystem;
@@ -14,19 +16,19 @@ public class ManagementSystemController {
         managementSystem = new ManagementSystemImpl();
     }
 
-    public Boolean logInUser(User user){
-        return managementSystem.logInUser(user);
+    public Boolean logInUser(User user, Connection connection){
+        return managementSystem.logInUser(user, connection);
     }
-    public Boolean logInLibrarian(Librarian librarian){
-        return managementSystem.logInLibrarian(librarian);
-    }
-
-    public User getUser(User user){
-        return managementSystem.getUser(user);
+    public Boolean logInLibrarian(Librarian librarian, Connection connection){
+        return managementSystem.logInLibrarian(librarian, connection);
     }
 
-    public Librarian getLibrarian(Librarian librarian){
-        return managementSystem.getLibrarian(librarian);
+    public User getUser(User user, Connection connection){
+        return managementSystem.getUser(user, connection);
+    }
+
+    public Librarian getLibrarian(Librarian librarian, Connection connection){
+        return managementSystem.getLibrarian(librarian, connection);
     }
 
     public Book getBookById(String bookId){

@@ -3,9 +3,9 @@ package org.example;
 import org.example.MiddleWare.Controller.LibrarianController;
 import org.example.MiddleWare.Controller.ManagementSystemController;
 import org.example.MiddleWare.Controller.UserController;
-import org.example.database.LibraryDatabase;
 import org.example.entity.*;
 
+import java.sql.Connection;
 import java.time.LocalDate;
 import java.util.Scanner;
 
@@ -16,10 +16,13 @@ public class LibrarySystem {
     private static ManagementSystemController managementSystemController;
     private static User user;
     private static Boolean loggedIn;
+    private static Connection connection;
 
     public static void main(String[] args) {
 
         LibraryDatabase.generateDatabase();
+
+        connection = DatabaseConnection.connect();
 
         loggedIn = true;
 
@@ -59,8 +62,8 @@ public class LibrarySystem {
         System.out.print("password: ");
         String password = scanner.nextLine();
 
-        if(managementSystemController.logInUser(new User(name, password))){
-            user = managementSystemController.getUser(new User(name, password));
+        if(managementSystemController.logInUser(new User(name, password), connection)){
+            user = managementSystemController.getUser(new User(name, password), connection);
             System.out.println("Welcome to Library");
             handleUser(scanner);
         }else{
@@ -77,8 +80,8 @@ public class LibrarySystem {
         System.out.print("password: ");
         String password = scanner.nextLine();
 
-        if(managementSystemController.logInLibrarian(new Librarian(name, password))){
-            Librarian librarian = managementSystemController.getLibrarian(new Librarian(name, password));
+        if(managementSystemController.logInLibrarian(new Librarian(name, password), connection)){
+            Librarian librarian = managementSystemController.getLibrarian(new Librarian(name, password), connection);
             System.out.println("Welcome to Library");
             handleLibrarian(librarian, scanner);
         }else{
@@ -98,16 +101,16 @@ public class LibrarySystem {
 
             switch (selectedOption){
                 case "1":
-                    userController.displayBook();
+                    userController.displayBook(connection);
                     break;
                 case "2":
                     handleBookBorrowRequest(scanner);
                     break;
                 case "3":
-                    userController.displayBorrowedBook(user);
+                    userController.displayBorrowedBook(user.getUserId(), connection);
                     break;
                 case "4":
-                    userController.displayDeadlineCrossedBook(user);
+                    userController.displayDeadlineCrossedBook(user.getUserId(), connection);
                     break;
                 case "5":
                     searchBookByPublications(scanner);
@@ -116,7 +119,7 @@ public class LibrarySystem {
                     fileComplain(scanner);
                     break;
                 case "7":
-                    userController.seeAllComplaint(user);
+                    userController.seeAllComplaint(user, connection);
                     break;
                 case "8":
                     submitFeedback(scanner);
@@ -149,7 +152,7 @@ public class LibrarySystem {
                     deleteBook(scanner);
                     break;
                 case "5":
-                    librarianController.displayAllUsers();
+                    librarianController.displayAllUsers(connection);
                     break;
                 case "6":
                     removeUser(scanner);
@@ -181,7 +184,7 @@ public class LibrarySystem {
         String feedbackMessage = scanner.nextLine();
 
         Feedback feedback = new Feedback(user, bookId, feedbackMessage, LocalDate.now());
-        userController.submitFeedback(feedback);
+        userController.submitFeedback(feedback, connection);
 
     }
     private static void fileComplain(Scanner scanner) {
@@ -190,26 +193,24 @@ public class LibrarySystem {
 
         Complaint complaint = new Complaint(user, complaintMessage, LocalDate.now());
 
-        userController.fileComplaint(complaint);
+        userController.fileComplaint(complaint, connection);
     }
     private static void searchBookByPublications(Scanner scanner) {
         System.out.print("Please enter the publication: ");
         String publication = scanner.nextLine();
 
-        userController.searchBookByPublications(publication);
+        userController.searchBookByPublications(publication, connection);
     }
     private static void handleBookBorrowRequest(Scanner scanner) {
         System.out.print("Please select the book Id: ");
         String selectedBookId = scanner.nextLine();
 
-        Book book = managementSystemController.getBookById(selectedBookId);
-
-        userController.borrowBook(user, book);
+        userController.borrowBook(user.getUserId(), selectedBookId, connection);
     }
     private static void getAllFeedbackByBookName(Scanner scanner) {
         System.out.print("Enter the Book Id: ");
         String bookId = scanner.nextLine();
-        librarianController.getAllFeedbacksByBookName(bookId);
+        librarianController.getAllFeedbacksByBookName(bookId, connection);
     }
     private static void removeUser(Scanner scanner) {
         System.out.print("Please enter the userId: ");
@@ -217,15 +218,16 @@ public class LibrarySystem {
 
         User userToRemove = managementSystemController.getUserById(userId);
 
-        librarianController.removeUser(userToRemove);
+        librarianController.removeUser(userToRemove, connection);
     }
     private static void deleteBook(Scanner scanner) {
         System.out.print("Please enter the Book Id you want to delete: ");
         String bookId = scanner.nextLine();
 
-        librarianController.deleteBookById(bookId);
+        librarianController.deleteBookById(bookId, connection);
     }
     private static void updateBook(Scanner scanner) {
+
     }
     private static void addBook(Scanner scanner) {
 
@@ -242,9 +244,7 @@ public class LibrarySystem {
         String category = scanner.nextLine();
 
         Book book = new Book(bookName, bookId, author, publications, true, category, null);
-        book.setBookName("ddd");
-        System.out.println(book.getBookName());
-        librarianController.addBook(book);
+        librarianController.addBook(book, connection);
     }
 
 
