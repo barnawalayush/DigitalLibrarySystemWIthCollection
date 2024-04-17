@@ -6,6 +6,11 @@ import org.example.entity.Book;
 import org.example.entity.Librarian;
 import org.example.entity.User;
 
+import java.util.Map;
+
+import static org.example.database.LibraryDatabase.bookList;
+import static org.example.database.LibraryDatabase.userList;
+
 public class ManagementSystemImpl implements ManagementSystem {
 
     public ManagementSystemImpl(){
@@ -13,7 +18,9 @@ public class ManagementSystemImpl implements ManagementSystem {
 
     @Override
     public Boolean logInUser(User user) {
-        for(User eachUser: LibraryDatabase.userList){
+        for (Map.Entry<String, User> entry : userList.entrySet()) {
+            String userId = entry.getKey();
+            User eachUser = entry.getValue();
             if(eachUser.getName().equals(user.getName()) && eachUser.getPassword().equals(user.getPassword())){
                 return true;
             }
@@ -43,8 +50,14 @@ public class ManagementSystemImpl implements ManagementSystem {
 
     @Override
     public User getUser(User user) {
-        return LibraryDatabase.userList.stream().filter(eachUser -> eachUser.getName().equals(user.getName())
-                && eachUser.getPassword().equals(user.getPassword())).findFirst().get();
+        for (Map.Entry<String, User> entry : userList.entrySet()) {
+            String userId = entry.getKey();
+            User eachUser = entry.getValue();
+            if(eachUser.getName().equals(user.getName()) && eachUser.getPassword().equals(user.getPassword())){
+                return eachUser;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -56,15 +69,12 @@ public class ManagementSystemImpl implements ManagementSystem {
 
     @Override
     public Book getBookById(String bookId) {
-        return LibraryDatabase.bookList.stream().filter(book -> book.getBookId().equals(bookId)).findFirst().get();
+        return bookList.get(bookId);
     }
 
     @Override
     public User getUserById(String userId) {
-        return LibraryDatabase.userList.stream()
-                .filter(eachUser -> eachUser.getUserId().equals(userId))
-                .findFirst()
-                .get();
+        return userList.get(userId);
     }
 
 

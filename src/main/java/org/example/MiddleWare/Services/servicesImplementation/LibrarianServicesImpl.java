@@ -6,6 +6,10 @@ import org.example.entity.Book;
 import org.example.entity.User;
 
 import java.util.Iterator;
+import java.util.Map;
+
+import static org.example.database.LibraryDatabase.bookList;
+import static org.example.database.LibraryDatabase.userList;
 
 public class LibrarianServicesImpl implements LibrarianServices {
 
@@ -18,29 +22,23 @@ public class LibrarianServicesImpl implements LibrarianServices {
 
     @Override
     public void addBook(Book book) {
-        LibraryDatabase.bookList.add(book);
+        bookList.put(book.getBookId(), book);
     }
 
     @Override
     public void updateBook(Book oldBook, Book newBook) {
-        LibraryDatabase.bookList.forEach(book -> {
+        for (Map.Entry<String, Book> entry : bookList.entrySet()) {
+            String bookId = entry.getKey();
+            Book book = entry.getValue();
             if(book.getBookId().equals(oldBook.getBookId())){
                 book = newBook;
             }
-        });
+        }
     }
 
     @Override
     public void deleteBookById(String bookId) {
-        Iterator<Book> bookIterator = LibraryDatabase.bookList.iterator();
-        while (bookIterator.hasNext()){
-            Book book = bookIterator.next();
-            if(book.getBookId().equals(bookId)){
-                bookIterator.remove();
-                System.out.println("Book removed Successfully");
-                return;
-            }
-        }
+        bookList.remove(bookId);
     }
 
     @Override
@@ -48,10 +46,12 @@ public class LibrarianServicesImpl implements LibrarianServices {
         System.out.println();
         System.out.println("### List of All Books ###");
         System.out.println();
-        LibraryDatabase.bookList.forEach(book -> {
+        for (Map.Entry<String, Book> entry : bookList.entrySet()) {
+            String bookId = entry.getKey();
+            Book book = entry.getValue();
             System.out.println(book.getBookId() + " " + book.getBookName() + " " + book.getAuthor()
                     + " " + book.getCategory());
-        });
+        }
     }
 
     @Override
@@ -66,23 +66,18 @@ public class LibrarianServicesImpl implements LibrarianServices {
 
     @Override
     public void removeUser(User user) {
-        Iterator<User> userIterator = LibraryDatabase.userList.iterator();
-        while (userIterator.hasNext()){
-            User eachUser = userIterator.next();
-            if(eachUser.getUserId().equals(user.getUserId())){
-                userIterator.remove();
-                System.out.println();
-                System.out.println("User removed Successfully!");
-                return;
-            }
-        }
+        userList.remove(user.getUserId());
+        System.out.println();
+        System.out.println("User removed Successfully!");
     }
 
     @Override
     public void displayAllUsers() {
-        LibraryDatabase.userList.forEach(user -> {
-            System.out.println(user.getUserId() + " " + user.getName());
-        });
+        for (Map.Entry<String, User> entry : userList.entrySet()) {
+            String userId = entry.getKey();
+            User eachUser = entry.getValue();
+            System.out.println(eachUser.getUserId() + " " + eachUser.getName());
+        }
     }
 
     @Override

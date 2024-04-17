@@ -5,6 +5,9 @@ import org.example.database.LibraryDatabase;
 import org.example.entity.*;
 
 import java.time.LocalDate;
+import java.util.Map;
+
+import static org.example.database.LibraryDatabase.bookList;
 
 public class UserServicesImp implements UserServices {
 
@@ -14,10 +17,12 @@ public class UserServicesImp implements UserServices {
     public void displayBooks() {
         System.out.println("### List of ALl Books ###");
         System.out.println();
-        LibraryDatabase.bookList.forEach(book -> {
+        for (Map.Entry<String, Book> entry : bookList.entrySet()) {
+            String bookId = entry.getKey();
+            Book book = entry.getValue();
             System.out.println(book.getBookId() + " " + book.getBookName() + " " + book.getAuthor()
-                + " " + book.getCategory());
-        });
+                    + " " + book.getCategory());
+        }
     }
 
     @Override
@@ -49,12 +54,10 @@ public class UserServicesImp implements UserServices {
     public void BorrowBook(User user, Book book) {
         LocalDate currentDate = LocalDate.now();
         ReservedBook reservedBook = new ReservedBook(user, book, currentDate, currentDate.plusDays(1));
-        LibraryDatabase.bookList.stream().forEach(eachBook -> {
-            if(eachBook.getBookId().equals(book.getBookId())){
-                eachBook.setAvailability(false);
-                eachBook.setUser(user);
-            }
-        });
+
+        Book bookToBorrow = bookList.get(book.getBookId());
+        bookToBorrow.setAvailability(false);
+        bookToBorrow.setUser(user);
 
         LibraryDatabase.reservedBookList.add(reservedBook);
     }
@@ -82,10 +85,14 @@ public class UserServicesImp implements UserServices {
     @Override
     public void searchBookByPublications(String publication) {
         System.out.println();
-        LibraryDatabase.bookList.stream()
-                .filter(book -> book.getPublication().toLowerCase().equals(publication.toLowerCase()))
-                .forEach(book -> System.out.println(book.getBookId() + " " + book.getBookName()
-                        + " " + book.getPublication()));
+        for (Map.Entry<String, Book> entry : bookList.entrySet()) {
+            String bookId = entry.getKey();
+            Book book = entry.getValue();
+            if(book.getPublication().equalsIgnoreCase(publication)){
+                System.out.println(book.getBookId() + " " + book.getBookName()
+                        + " " + book.getPublication());
+            }
+        }
     }
 
     @Override

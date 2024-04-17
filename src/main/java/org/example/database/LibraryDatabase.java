@@ -2,13 +2,12 @@ package org.example.database;
 
 import org.example.entity.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class LibraryDatabase {
 
-    public static List<User> userList;
-    public static List<Book> bookList;
+    public static Map<String, User> userList;
+    public static Map<String, Book> bookList;
     public static List<Librarian> librarianList;
     public static List<Complaint> complaintList;
     public static List<ReservedBook> reservedBookList;
@@ -16,25 +15,25 @@ public class LibraryDatabase {
 
     public static void generateDatabase(){
 
-        userList = new ArrayList<>();
-        bookList = new ArrayList<>();
+        userList = new HashMap<>();
+        bookList = new HashMap<>();
         librarianList = new ArrayList<>();
         complaintList = new ArrayList<>();
         reservedBookList = new ArrayList<>();
         feedbackList = new ArrayList<>();
 
-        userList.add(new User("Sherlock", "1", "serlock"));
-        userList.add(new User("John", "2", "john"));
-        userList.add(new User("Jessica", "3", "jessica"));
-        userList.add(new User("Antonio", "4", "antonio"));
-        userList.add(new User("Lorenzo", "5", "lorenzo"));
-        userList.add(new User("Belmont", "6", "belmont"));
+        userList.put("1", new User("Sherlock", "1", "serlock"));
+        userList.put("2", new User("John", "2", "john"));
+        userList.put("3", new User("Jessica", "3", "jessica"));
+        userList.put("4", new User("Antonio", "4", "antonio"));
+        userList.put("5", new User("Lorenzo", "5", "lorenzo"));
+        userList.put("6", new User("Belmont", "6", "belmont"));
 
-        bookList.add(new Book("Java Core", "1", "Cay S. Horstmann", "Pearson", true, "Software", null));
-        bookList.add(new Book("Python Backend", "2", "Gary Cornell", "Sun Microsystems", true, "Devops", null));
-        bookList.add(new Book("Clean Code", "3", "Robert Martin", "Sage", true, "Software", null));
-        bookList.add(new Book("Refactoring", "4", "Cay S. Horstmann", "Emerald", true, "CSE", null));
-        bookList.add(new Book("Merchant Of Venice", "5", "William Shakespeare", "Pearson", true, "Novel", null));
+        bookList.put("1", new Book("Java Core", "1", "Cay S. Horstmann", "Pearson", true, "Software", null));
+        bookList.put("2", new Book("Python Backend", "2", "Gary Cornell", "Sun Microsystems", true, "Devops", null));
+        bookList.put("3", new Book("Clean Code", "3", "Robert Martin", "Sage", true, "Software", null));
+        bookList.put("4", new Book("Refactoring", "4", "Cay S. Horstmann", "Emerald", true, "CSE", null));
+        bookList.put("5", new Book("Merchant Of Venice", "5", "William Shakespeare", "Pearson", true, "Novel", null));
 
         librarianList.add(new Librarian("1", "Nerissa", "nerissa"));
 
